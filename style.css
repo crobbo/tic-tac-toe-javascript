@@ -77,38 +77,38 @@ table {
     height: 650px;
 }
 
-.grid-1 {
+.js-grid-1 {
     border-right: 3px solid black;
     border-bottom: 3px solid black;
 }
-.grid-2 {
+.js-grid-2 {
     border-right: 3px solid black;
     border-bottom: 3px solid black;
 }
 
-.grid-3 {
+.js-grid-3 {
     border-bottom: 3px solid black;
 }
 
-.grid-4 {
-    border-bottom: 3px solid black;
-    border-right: 3px solid black;
-}
-
-.grid-5 {
+.js-grid-4 {
     border-bottom: 3px solid black;
     border-right: 3px solid black;
 }
 
-.grid-6 {
+.js-grid-5 {
     border-bottom: 3px solid black;
-}
-
-.grid-7 {
     border-right: 3px solid black;
 }
 
-.grid-8 {
+.js-grid-6 {
+    border-bottom: 3px solid black;
+}
+
+.js-grid-7 {
+    border-right: 3px solid black;
+}
+
+.js-grid-8 {
     border-right: 3px solid black;
 }
 
