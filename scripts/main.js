@@ -1,6 +1,8 @@
 // Gameboard module
 var gameBoard = (function() {
     'use strict';
+
+    var _gameOver = false;
     var _board = ["", "", "",
                  "", "", "",
                  "", "", ""];
@@ -21,7 +23,7 @@ var gameBoard = (function() {
     }
 
     function _checkDiags() {
-        
+
     }
 
     function arraysEqual(a, b) {
@@ -44,13 +46,20 @@ var gameBoard = (function() {
         return _board;
     }
 
-    function checkWinner() {
-        if(_checkStraights()) return true;
+    function returnGameOver() {
+        return _gameOver;
+    }
+
+    function checkForWinner() {
+        if (_checkStraights() || _checkDiags()) {
+            _gameOver = true;
+            return true;
+        }
         return false;
     }
 
     return {
-        returnBoard, updateBoard, checkWinner
+        returnBoard, updateBoard, checkForWinner, returnGameOver
     };
 })();
 
@@ -102,23 +111,26 @@ const Player1 = Player('X', true);
 const Player2 = Player('O', false);
 
 // Event Listener
-document.body.addEventListener("click", (e) => {
-    if (e.target.classList.contains("js-place-counter")) {
-        let num = parseInt(e.path[0].classList[0].slice(-1))
-        let counter = ''
 
-        if (Player1.returnMove()) {
-            counter = Player1.returnCounter();
-            Player1.setMove(false)
-            Player2.setMove(true)
-        } else {
-            counter = Player2.returnCounter();
-            Player2.setMove(false)
-            Player1.setMove(true)
+while (gameBoard.returnGameOver() != true) {
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("js-place-counter")) {
+            let num = parseInt(e.path[0].classList[0].slice(-1))
+            let counter = ''
+    
+            if (Player1.returnMove()) {
+                counter = Player1.returnCounter();
+                Player1.setMove(false)
+                Player2.setMove(true)
+            } else {
+                counter = Player2.returnCounter();
+                Player2.setMove(false)
+                Player1.setMove(true)
+            }
+    
+            gameBoard.updateBoard(num, counter);
+            displayController.displayCounters(gameBoard.returnBoard());
+            gameBoard.checkForWinner()
         }
-
-        gameBoard.updateBoard(num, counter);
-        displayController.displayCounters(gameBoard.returnBoard());
-        // console.log(gameBoard.checkWinner())
-    }
-});
+    });
+}
