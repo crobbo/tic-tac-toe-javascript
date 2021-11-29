@@ -1,11 +1,12 @@
 // Gameboard module
 var gameBoard = (function() {
     'use strict';
-
+   
     var _gameOver = false;
     var _board = ["", "", "",
                  "", "", "",
                  "", "", ""];
+    var _count = 0;
 
     function _checkStraights() {
         let h1 = _board.slice(0, 3);
@@ -23,7 +24,22 @@ var gameBoard = (function() {
     }
 
     function _checkDiags() {
+        let diag1 = [_board[0], _board[4], _board[8]];
+        let diag2 = [_board[2], _board[4], _board[6]];
+        let allDiags = [ diag1, diag2 ];
 
+        for (let i=0; i < allDiags.length; i++) {
+            if (arraysEqual(allDiags[i], ['X', 'X', 'X']) || arraysEqual(allDiags[i], ['O', 'O', 'O'])) return true;
+        }
+        return false;
+    }
+
+    function gameLogic(num, counter) {
+        if (_count === 9) return false
+        gameBoard.updateBoard(num, counter);
+        displayController.displayCounters(gameBoard.returnBoard());
+        gameBoard.checkForWinner() ? console.log("Winner") : null
+        _count++
     }
 
     function arraysEqual(a, b) {
@@ -39,11 +55,14 @@ var gameBoard = (function() {
 
     function updateBoard(num, counter) {
         _board[num-1] = counter;
-        console.log(_board)
     }
 
     function returnBoard() {
         return _board;
+    }
+
+    function returnCount() {
+      return _count;
     }
 
     function returnGameOver() {
@@ -59,8 +78,9 @@ var gameBoard = (function() {
     }
 
     return {
-        returnBoard, updateBoard, checkForWinner, returnGameOver
+        returnBoard, updateBoard, checkForWinner, returnGameOver, returnCount, gameLogic
     };
+
 })();
 
 // Display module
@@ -71,8 +91,10 @@ var displayController = (function() {
         var childDivs = document.getElementById('board').getElementsByTagName('div');
         for( let i=0; i < childDivs.length; i++ )
             {
-            var childDiv = childDivs[i];
-            childDiv.innerText = board[i]
+                var childDiv = childDivs[i];
+                if (childDiv.innerText == "") {
+                    childDiv.innerText = board[i]
+                }
             }
     }
 
@@ -106,18 +128,16 @@ const Player = (function(counter, move) {
 });
 
 // Initialize players
-
 const Player1 = Player('X', true);
 const Player2 = Player('O', false);
 
 // Event Listener
-
-while (gameBoard.returnGameOver() != true) {
-    document.body.addEventListener("click", (e) => {
-        if (e.target.classList.contains("js-place-counter")) {
-            let num = parseInt(e.path[0].classList[0].slice(-1))
-            let counter = ''
-    
+document.body.addEventListener("click", (e) => {
+    if (e.target.classList.contains("js-place-counter")) {
+        let num = parseInt(e.path[0].classList[0].slice(-1))
+        let counter = ''
+        
+        if (gameBoard.returnBoard()[num-1] == "") {    
             if (Player1.returnMove()) {
                 counter = Player1.returnCounter();
                 Player1.setMove(false)
@@ -127,10 +147,7 @@ while (gameBoard.returnGameOver() != true) {
                 Player2.setMove(false)
                 Player1.setMove(true)
             }
-    
-            gameBoard.updateBoard(num, counter);
-            displayController.displayCounters(gameBoard.returnBoard());
-            gameBoard.checkForWinner()
+            gameBoard.gameLogic(num, counter);
         }
-    });
-}
+    }
+});
