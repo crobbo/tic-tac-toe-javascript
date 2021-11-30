@@ -35,11 +35,15 @@ var gameBoard = (function() {
     }
 
     function gameLogic(num, counter) {
-        if (_count === 9) return false
+        if (_count === 9) { 
+            _gameOver = true;
+            return false
+        }
         gameBoard.updateBoard(num, counter);
-        displayController.displayCounters(gameBoard.returnBoard());
-        gameBoard.checkForWinner() ? console.log("Winner") : null
+        displayController.displayCounters(num, gameBoard.returnBoard(), displayController.iconHtml());
         _count++
+        displayController.gameInfo();
+        if (checkForWinner()) return displayController.showRestartBtn()
     }
 
     function arraysEqual(a, b) {
@@ -77,6 +81,15 @@ var gameBoard = (function() {
         return false;
     }
 
+    function restartGame() {
+        _gameOver = false;
+        _board = ["", "", "",
+        "", "", "",
+        "", "", ""];
+        _count = 0
+       displayController.clearCounters();
+    }
+
     return {
         returnBoard, updateBoard, checkForWinner, returnGameOver, returnCount, gameLogic
     };
@@ -87,28 +100,69 @@ var gameBoard = (function() {
 var displayController = (function() {
     'use strict';
 
-    function displayCounters(board) {
+    function displayCounters(num, board, iconHtml) {
         var childDivs = document.getElementById('board').getElementsByTagName('div');
+        
         for( let i=0; i < childDivs.length; i++ )
-            {
-                var childDiv = childDivs[i];
-                if (childDiv.innerText == "") {
-                    childDiv.innerText = board[i]
-                }
+        {
+            if ((i+1) === num) {
+                let childDiv = childDivs[i];
+                childDiv.innerHTML = iconHtml;
             }
+        }
+    }
+
+    function gameInfo() {
+        var displayInfo = document.getElementById('js-game-info')
+        displayInfo.innerText = _displayInfo();
+    }
+
+    function _displayInfo() {
+        if (gameBoard.checkForWinner()) {
+            return Player1.returnMove() ? "🏆 Player Two Wins! 🏆" : "🏆 Player One Wins! 🏆"
+        } else if (gameBoard.returnCount() === 9) {
+            displayController.showRestartBtn();
+            return "Draw 😐"
+        } else if (Player1.returnMove()) {
+            return "Player One's Turn!";
+        } else {
+            return "Player Two's Turn!" 
+        }
+    }
+
+    function iconHtml() {
+        if (Player1.returnMove()){
+            return Player2.returnCounterHtml();
+        } else {
+            return Player1.returnCounterHtml();
+        }
+    }
+
+    function showRestartBtn() {
+        document.querySelector('.js-restart').style.display = "flex"
+    }
+
+    function clearCounters() {
+        var childDivs = document.getElementById('board').getElementsByTagName('div');
+        
+        for( let i=0; i < childDivs.length; i++ )
+        {
+                let childDiv = childDivs[i];
+                // childDiv.innerHTML = "";
+        }
     }
 
     return {
-        displayCounters
+        displayCounters, gameInfo, iconHtml, showRestartBtn, clearCounters
     };
 })();
-
 
 // Player Factory functory
 const Player = (function(counter, move) {
     'use strict';
     var _counter = counter;
     var _move = move;
+    var _counterHtml = counterHtml(); 
 
     function returnCounter() {
         return _counter;
@@ -122,8 +176,20 @@ const Player = (function(counter, move) {
         _move = boolean
     }
 
+    function counterHtml() {
+        if (_counter === 'X') {
+            return '<i class="fas fa-times"></i>'
+        } else {
+            return '<i class="far fa-circle"></i>'
+        }
+    }
+
+    function returnCounterHtml() {
+        return _counterHtml;
+    }
+
     return {
-        returnCounter, returnMove, setMove
+        returnCounter, returnMove, setMove, returnCounterHtml
     };
 });
 
@@ -131,23 +197,34 @@ const Player = (function(counter, move) {
 const Player1 = Player('X', true);
 const Player2 = Player('O', false);
 
-// Event Listener
-document.body.addEventListener("click", (e) => {
-    if (e.target.classList.contains("js-place-counter")) {
-        let num = parseInt(e.path[0].classList[0].slice(-1))
-        let counter = ''
-        
-        if (gameBoard.returnBoard()[num-1] == "") {    
-            if (Player1.returnMove()) {
-                counter = Player1.returnCounter();
-                Player1.setMove(false)
-                Player2.setMove(true)
-            } else {
-                counter = Player2.returnCounter();
-                Player2.setMove(false)
-                Player1.setMove(true)
+// Event Listeners
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("js-place-counter")) {
+            if (gameBoard.returnGameOver() === true) {
+                displayController.showRestartBtn();
+                return
             }
-            gameBoard.gameLogic(num, counter);
+            let num = parseInt(e.path[0].classList[0].slice(-1))
+            let counter = ''
+            
+            if (gameBoard.returnBoard()[num-1] == "") {    
+                if (Player1.returnMove()) {
+                    counter = Player1.returnCounter();
+                    Player1.setMove(false)
+                    Player2.setMove(true)
+                } else {
+                    counter = Player2.returnCounter();
+                    Player2.setMove(false)
+                    Player1.setMove(true)
+                }
+                gameBoard.gameLogic(num, counter);
+            }
         }
-    }
-});
+    });
+
+
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("js-restart")) {
+            gameBoard.restartGame();
+        }
+    });
