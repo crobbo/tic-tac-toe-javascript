@@ -1,21 +1,3 @@
-// Event Listeners
-    document.body.addEventListener("click", (e) => {
-        if (e.target.classList.contains("js-place-counter")) {
-            let num = parseInt(e.path[0].classList[0].slice(-1));
-            let counter = '';
-            
-            gameBoard.startUpCheck();
-            gameBoard.setPlayerMove(num, counter);
-            gameBoard.gameLogic(num, counter);
-        }
-    });
-
-    document.body.addEventListener("click", (e) => {
-        if (e.target.classList.contains("js-restart")) {
-            gameBoard.restartGame();
-        }
-    });
-
 // Gameboard module  - controls the game logic.
 var gameBoard = (function() {
     'use strict';
@@ -132,6 +114,7 @@ var gameBoard = (function() {
                 Player2.setMove(false)
                 Player1.setMove(true)
             }
+            gameBoard.gameLogic(num, counter);
         } 
     }
 
@@ -253,3 +236,20 @@ const Player = (function(counter, move) {
 // Initialize players
 const Player1 = Player('X', true);
 const Player2 = Player('O', false);
+
+// Event Listeners
+document.body.addEventListener("click", (e) => {
+    if (e.target.classList.contains("js-place-counter")) {
+        let num = parseInt(e.path[0].classList[0].slice(-1));
+        let counter = '';
+        
+        gameBoard.startUpCheck();
+        gameBoard.setPlayerMove(num, counter);
+    }
+});
+
+document.body.addEventListener("click", (e) => {
+    if (e.target.classList.contains("js-restart")) {
+        gameBoard.restartGame();
+    }
+});
