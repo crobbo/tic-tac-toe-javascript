@@ -1,13 +1,35 @@
-// Gameboard module
+// Initialize players
+const Player1 = Player('X', true);
+const Player2 = Player('O', false);
+
+// Event Listeners
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("js-place-counter")) {
+            let num = parseInt(e.path[0].classList[0].slice(-1));
+            let counter = '';
+            
+            gameBoard.startUpCheck();
+            gameBoard.setPlayerMove(num, counter);
+        }
+    });
+
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("js-restart")) {
+            gameBoard.restartGame();
+        }
+    });
+
+// Gameboard module  - controls the game logic.
 var gameBoard = (function() {
     'use strict';
-   
+    // Private variables
     var _gameOver = false;
     var _board = ["", "", "",
                  "", "", "",
                  "", "", ""];
     var _count = 0;
 
+    // Private methods
     function _checkStraights() {
         let h1 = _board.slice(0, 3);
         let h2 = _board.slice(3, 6);
@@ -18,7 +40,7 @@ var gameBoard = (function() {
         let allStraights = [ h1, h2, h3, v1, v2, v3 ]
 
         for (let i=0; i < allStraights.length; i++) {
-            if (arraysEqual(allStraights[i], ['X', 'X', 'X']) || arraysEqual(allStraights[i], ['O', 'O', 'O'])) return true;
+            if (_arraysEqual(allStraights[i], ['X', 'X', 'X']) || _arraysEqual(allStraights[i], ['O', 'O', 'O'])) return true;
         }
         return false;
     }
@@ -29,11 +51,27 @@ var gameBoard = (function() {
         let allDiags = [ diag1, diag2 ];
 
         for (let i=0; i < allDiags.length; i++) {
-            if (arraysEqual(allDiags[i], ['X', 'X', 'X']) || arraysEqual(allDiags[i], ['O', 'O', 'O'])) return true;
+            if (_arraysEqual(allDiags[i], ['X', 'X', 'X']) || _arraysEqual(allDiags[i], ['O', 'O', 'O'])) return true;
         }
         return false;
     }
 
+    function _arraysEqual(a, b) {
+        if (a === b) return true;
+        if (a == null || b == null) return false;
+        if (a.length !== b.length) return false;
+            
+        for (var i = 0; i < a.length; ++i) {
+            if (a[i] !== b[i]) return false;
+        }
+        return true;
+    }
+
+    function _checkPlacement(num) {
+        return gameBoard.returnBoard()[num-1] == "" ? true : false
+    }
+
+    // Public methods
     function gameLogic(num, counter) {
         if (_count === 9) { 
             _gameOver = true;
@@ -45,17 +83,6 @@ var gameBoard = (function() {
         displayController.gameInfo();
         if (checkForWinner()) return displayController.showRestartBtn()
     }
-
-    function arraysEqual(a, b) {
-        if (a === b) return true;
-        if (a == null || b == null) return false;
-        if (a.length !== b.length) return false;
-           
-        for (var i = 0; i < a.length; ++i) {
-          if (a[i] !== b[i]) return false;
-        }
-        return true;
-      }
 
     function updateBoard(num, counter) {
         _board[num-1] = counter;
@@ -90,16 +117,60 @@ var gameBoard = (function() {
        displayController.clearCounters();
     }
 
+    function startUpCheck() {
+        if (gameBoard.returnGameOver() === true) {
+            displayController.showRestartBtn();
+            return
+        }
+      }
+
+    function setPlayerMove(num, counter) {
+        if (_checkPlacement(num)) {    
+            if (Player1.returnMove()) {
+                counter = Player1.returnCounter();
+                Player1.setMove(false)
+                Player2.setMove(true)
+            } else {
+                counter = Player2.returnCounter();
+                Player2.setMove(false)
+                Player1.setMove(true)
+            }
+            gameLogic(num, counter);
+        } 
+    }
+
     return {
-        returnBoard, updateBoard, checkForWinner, returnGameOver, returnCount, gameLogic
+        returnBoard,
+        updateBoard,
+        checkForWinner,
+        returnGameOver,
+        returnCount,
+        gameLogic,
+        startUpCheck,
+        setPlayerMove
     };
 
 })();
 
-// Display module
+// Display module - manipulates the UI
 var displayController = (function() {
     'use strict';
 
+    // Private methods
+    function _displayInfo() {
+        if (gameBoard.checkForWinner()) {
+            return Player1.returnMove() ? "🏆 Player Two Wins! 🏆" : "🏆 Player One Wins! 🏆"
+        } else if (gameBoard.returnCount() === 9) {
+            displayController.showRestartBtn();
+            return "Draw 😐"
+        } else if (Player1.returnMove()) {
+            return "Player One's Turn!";
+        } else {
+            return "Player Two's Turn!" 
+        }
+    }
+
+    // Public methods
     function displayCounters(num, board, iconHtml) {
         var childDivs = document.getElementById('board').getElementsByTagName('div');
         
@@ -115,19 +186,6 @@ var displayController = (function() {
     function gameInfo() {
         var displayInfo = document.getElementById('js-game-info')
         displayInfo.innerText = _displayInfo();
-    }
-
-    function _displayInfo() {
-        if (gameBoard.checkForWinner()) {
-            return Player1.returnMove() ? "🏆 Player Two Wins! 🏆" : "🏆 Player One Wins! 🏆"
-        } else if (gameBoard.returnCount() === 9) {
-            displayController.showRestartBtn();
-            return "Draw 😐"
-        } else if (Player1.returnMove()) {
-            return "Player One's Turn!";
-        } else {
-            return "Player Two's Turn!" 
-        }
     }
 
     function iconHtml() {
@@ -148,7 +206,6 @@ var displayController = (function() {
         for( let i=0; i < childDivs.length; i++ )
         {
                 let childDiv = childDivs[i];
-                // childDiv.innerHTML = "";
         }
     }
 
@@ -157,13 +214,25 @@ var displayController = (function() {
     };
 })();
 
-// Player Factory functory
+// Player factory functory 
 const Player = (function(counter, move) {
     'use strict';
+
+    // Private Variables
     var _counter = counter;
     var _move = move;
     var _counterHtml = counterHtml(); 
 
+    // Private methods
+    function counterHtml() {
+        if (_counter === 'X') {
+            return '<i class="fas fa-times"></i>'
+        } else {
+            return '<i class="far fa-circle"></i>'
+        }
+    }
+
+    // Public methods
     function returnCounter() {
         return _counter;
     }
@@ -176,14 +245,6 @@ const Player = (function(counter, move) {
         _move = boolean
     }
 
-    function counterHtml() {
-        if (_counter === 'X') {
-            return '<i class="fas fa-times"></i>'
-        } else {
-            return '<i class="far fa-circle"></i>'
-        }
-    }
-
     function returnCounterHtml() {
         return _counterHtml;
     }
@@ -192,39 +253,3 @@ const Player = (function(counter, move) {
         returnCounter, returnMove, setMove, returnCounterHtml
     };
 });
-
-// Initialize players
-const Player1 = Player('X', true);
-const Player2 = Player('O', false);
-
-// Event Listeners
-    document.body.addEventListener("click", (e) => {
-        if (e.target.classList.contains("js-place-counter")) {
-            if (gameBoard.returnGameOver() === true) {
-                displayController.showRestartBtn();
-                return
-            }
-            let num = parseInt(e.path[0].classList[0].slice(-1))
-            let counter = ''
-            
-            if (gameBoard.returnBoard()[num-1] == "") {    
-                if (Player1.returnMove()) {
-                    counter = Player1.returnCounter();
-                    Player1.setMove(false)
-                    Player2.setMove(true)
-                } else {
-                    counter = Player2.returnCounter();
-                    Player2.setMove(false)
-                    Player1.setMove(true)
-                }
-                gameBoard.gameLogic(num, counter);
-            }
-        }
-    });
-
-
-    document.body.addEventListener("click", (e) => {
-        if (e.target.classList.contains("js-restart")) {
-            gameBoard.restartGame();
-        }
-    });
