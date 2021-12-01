@@ -8,9 +8,13 @@ const Player2 = Player('O', false);
             let num = parseInt(e.path[0].classList[0].slice(-1));
             let counter = '';
             
-            gameBoard.startUpCheck();
-            gameBoard.setPlayerMove(num, counter);
-            gameBoard.gameLogic(num, counter);
+            if (gameBoard.isMultiPlayer()) {
+                gameBoard.startUpCheck();
+                gameBoard.setPlayerMove(num, counter);
+                gameBoard.multiPlayerLogic(num, counter);
+            } else if (gameBoard.isSinglePlayer()) {
+                gameBoard.SinglePlayerLogic();
+            }
         }
     });
 
@@ -19,6 +23,18 @@ const Player2 = Player('O', false);
             gameBoard.restartGame();
         }
     });
+
+    // document.body.addEventListener("click", (e) => {
+    //     if (e.target.classList.contains("")) {
+            
+    //     }
+    // });
+
+    // document.body.addEventListener("click", (e) => {
+    //     if (e.target.classList.contains("")) {
+            
+    //     }
+    // });
 
 // Gameboard module  - controls the game logic.
 var gameBoard = (function() {
@@ -29,6 +45,9 @@ var gameBoard = (function() {
                  "", "", "",
                  "", "", ""];
     var _count = 0;
+    var _singlePlayer = false;
+    var _mulitPlayer = false;
+
 
     // Private methods
     function _checkStraights() {
@@ -73,7 +92,7 @@ var gameBoard = (function() {
     }
 
     // Public methods
-    function gameLogic(num, counter) {
+    function multiPlayerLogic(num, counter) {
         if (_count === 9) { 
             _gameOver = true;
             return false
@@ -139,15 +158,25 @@ var gameBoard = (function() {
         } 
     }
 
+    function isSinglePlayer() {
+        return _isSinglePlayer;
+    }
+
+    function isMultiPlayer() { 
+        return _multiPlayer;
+    }
+
     return {
         returnBoard,
         updateBoard,
         checkForWinner,
         returnGameOver,
         returnCount,
-        gameLogic,
+        multiPlayerLogic,
         startUpCheck,
-        setPlayerMove
+        setPlayerMove,
+        isSinglePlayer,
+        isMultiPlayer
     };
 
 })();
