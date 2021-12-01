@@ -74,6 +74,7 @@ table {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 30vw;
 }
 
 .board {
@@ -153,4 +154,45 @@ table {
     background-color: rgb(109, 252, 109);
     border-color: rgb(109, 252, 109);
     display: none;
+}
+
+.btn-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.single-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border:1px solid rgb(75, 72, 72);
+    width: 200px;
+    height: 50px;
+    border-radius: 5px;
+    color: rgb(0, 0, 0);
+    font-size: 1.2rem;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    text-decoration: none;
+    background-color: rgb(109, 252, 109);
+    border-color: rgb(109, 252, 109);
+    margin: 10px;
+}
+
+.multi-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border:1px solid rgb(75, 72, 72);
+    width: 200px;
+    height: 50px;
+    border-radius: 5px;
+    color: rgb(0, 0, 0);
+    font-size: 1.2rem;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    text-decoration: none;
+    background-color: rgb(109, 252, 109);
+    border-color: rgb(109, 252, 109);
+    margin: 10px;
 }
