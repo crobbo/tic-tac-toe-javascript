@@ -1,7 +1,3 @@
-// Initialize players
-const Player1 = Player('X', true);
-const Player2 = Player('O', false);
-
 // Event Listeners
     document.body.addEventListener("click", (e) => {
         if (e.target.classList.contains("js-place-counter")) {
