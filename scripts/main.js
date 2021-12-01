@@ -10,6 +10,7 @@ const Player2 = Player('O', false);
             
             gameBoard.startUpCheck();
             gameBoard.setPlayerMove(num, counter);
+            gameBoard.gameLogic(num, counter);
         }
     });
 
@@ -135,7 +136,6 @@ var gameBoard = (function() {
                 Player2.setMove(false)
                 Player1.setMove(true)
             }
-            gameLogic(num, counter);
         } 
     }
 
