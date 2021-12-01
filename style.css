@@ -47,6 +47,31 @@ table {
 	border-spacing: 0;
 }
 
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-header {
+    /* display: flex;
+    flex-direction: row;
+    justify-content: start; */
+    width: 59%;
+    text-align: right;
+}
+
+
+.btn-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    width: 41%;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
 .row-container {
     display: flex;
     flex-direction: row;
@@ -58,15 +83,13 @@ table {
 .page-title {
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 3rem;
-    text-align: center;
-    margin-top: 30px;
 }
 
 .game-info {
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 1.5rem;
-    text-align: center;
-    margin: 30px 0px 30px 0px;
+    text-align: right;
+    margin: 15px 0px 30px 0px;
 }
 
 .column-container {
@@ -74,7 +97,6 @@ table {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 30vw;
 }
 
 .board {
@@ -156,18 +178,11 @@ table {
     display: none;
 }
 
-.btn-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-}
-
 .single-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    border:1px solid rgb(75, 72, 72);
+    border:1px solid rgba(194, 146, 248, 0.398);
     width: 200px;
     height: 50px;
     border-radius: 5px;
@@ -175,8 +190,8 @@ table {
     font-size: 1.2rem;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     text-decoration: none;
-    background-color: rgb(109, 252, 109);
-    border-color: rgb(109, 252, 109);
+    background-color: rgba(194, 146, 248, 0.398);
+    border-color: rgba(194, 146, 248, 0.398);
     margin: 10px;
 }
 
@@ -184,7 +199,7 @@ table {
     display: flex;
     align-items: center;
     justify-content: center;
-    border:1px solid rgb(75, 72, 72);
+    border:1px solid rgb(147, 252, 247);
     width: 200px;
     height: 50px;
     border-radius: 5px;
@@ -192,7 +207,7 @@ table {
     font-size: 1.2rem;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     text-decoration: none;
-    background-color: rgb(109, 252, 109);
-    border-color: rgb(109, 252, 109);
+    background-color: rgb(147, 252, 247);
+    border-color: rgb(147, 252, 247);
     margin: 10px;
 }

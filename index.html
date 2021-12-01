@@ -9,19 +9,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <h1 class="page-title">Tic Tac Toe</h1>
-        <h2 class="game-info" id="js-game-info">Player One goes first!</h2>
+    <header>
+        <div class="title-header"><h1 class="page-title">Tic Tac Toe</h1>
+            <h2 class="game-info" id="js-game-info">Player One goes first!</h2>
+        </div>
+        
+        <div class="btn-header">
+            <div>
+                <a href="" class="multi-btn">
+                    Multi Player Mode
+                </a>
+                <a href="" class="single-btn">
+                    Single Player Mode
+                </a>
+            </div>
+        </div>
+    </header>
+        
 
         <div class="row-container">
             <div class="column-container">
-                <div class="btn-container">
-                    <a href="" class="multi-btn">
-                        Multi Player Mode
-                    </a>
-                    <a href="" class="single-btn">
-                        Single Player Mode
-                    </a>
-                </div>
+             
                 <div class="board" id="board">
                     <div class="js-grid-1 js-place-counter"></div>
                     <div class="js-grid-2 js-place-counter"></div>
