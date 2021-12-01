@@ -214,7 +214,7 @@ var displayController = (function() {
     };
 })();
 
-// Player factory functory 
+// Player factory functon
 const Player = (function(counter, move) {
     'use strict';
 
