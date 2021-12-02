@@ -9,12 +9,38 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <div class="page-wrapper">
-        <div class="header"></div>
-        <div class="new-title">
-            <p>Test</p>
+    <div class="page-layout">
+            <div class="page-title">
+                <h1>Tic Tac Toe</h1>
+                <h2 class="game-info" id="js-game-info">👇 PLAYER ONE GOES FIRST 👇</h2>
+            </div>
+            <div class="gameplay-btns">
+                <div>
+                    <a href="" class="multi-btn">
+                        Multi Player Mode
+                    </a>
+                    <a href="" class="single-btn">
+                        Single Player Mode
+                    </a>
+                </div>
+            </div>
+        <div class="board-container">
+            <div class="board" id="board">
+                <div class="js-grid-1 js-place-counter"></div>
+                <div class="js-grid-2 js-place-counter"></div>
+                <div class="js-grid-3 js-place-counter"></div>
+                <div class="js-grid-4 js-place-counter"></div>
+                <div class="js-grid-5 js-place-counter"></div>
+                <div class="js-grid-6 js-place-counter"></div>
+                <div class="js-grid-7 js-place-counter"></div>
+                <div class="js-grid-8 js-place-counter"></div>
+                <div class="js-grid-9 js-place-counter"></div>
+            </div>
         </div>
     </div>
+    <a href="" class="js-restart restart-btn">
+        Play Again 
+    </a>
 </body>
 <script src="scripts/main.js"></script>
 </html>

@@ -4,13 +4,13 @@
             let num = parseInt(e.path[0].classList[0].slice(-1));
             let counter = '';
             
-            if (gameBoard.isMultiPlayer()) {
+            // if (gameBoard.isMultiPlayer()) {
                 gameBoard.startUpCheck();
                 gameBoard.setPlayerMove(num, counter);
                 gameBoard.multiPlayerLogic(num, counter);
-            } else if (gameBoard.isSinglePlayer()) {
-                gameBoard.SinglePlayerLogic();
-            }
+            // } else if (gameBoard.isSinglePlayer()) {
+                // gameBoard.SinglePlayerLogic();
+            // }
         }
     });
 
