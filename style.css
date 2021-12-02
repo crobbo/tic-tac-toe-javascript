@@ -47,6 +47,28 @@ table {
 	border-spacing: 0;
 }
 
+/* NEW LAYOUT CSS */
+
+.page-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 100px;
+}
+
+.header {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    border: 1px solid black;
+}
+
+.new.title {
+    grid-column-start: 7;
+    grid-column-end: 8;
+    border: 1px solid black;
+}
+
+/* END OF NEW LAYOUT CSS */
+
 header {
     display: flex;
     flex-direction: row;
