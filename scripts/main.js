@@ -4,13 +4,13 @@
             let num = parseInt(e.path[0].classList[0].slice(-1));
             let counter = '';
             
-            // if (gameBoard.isMultiPlayer()) {
+            if (gameBoard.isMultiPlayer()) {
                 gameBoard.startUpCheck();
                 gameBoard.setPlayerMove(num, counter);
-                gameBoard.multiPlayerLogic(num, counter);
-            // } else if (gameBoard.isSinglePlayer()) {
-                // gameBoard.SinglePlayerLogic();
-            // }
+            } else if (gameBoard.isSinglePlayer()) {
+                gameBoard.SinglePlayerLogic();
+
+            }
         }
     });
 
@@ -20,17 +20,20 @@
         }
     });
 
-    // document.body.addEventListener("click", (e) => {
-    //     if (e.target.classList.contains("")) {
-            
-    //     }
-    // });
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("js-multi-btn")) {
+            gameBoard.setGameMode('multi');
+            displayController.revealBoard();
+        }
+    });
 
-    // document.body.addEventListener("click", (e) => {
-    //     if (e.target.classList.contains("")) {
-            
-    //     }
-    // });
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("js-single-btn")) {
+            console.log(e.target)
+            gameBoard.setGameMode('single');
+            displayController.revealBoard();
+        }
+    });
 
 // Gameboard module  - controls the game logic.
 var gameBoard = (function() {
@@ -41,8 +44,8 @@ var gameBoard = (function() {
                  "", "", "",
                  "", "", ""];
     var _count = 0;
-    var _singlePlayer = false;
-    var _mulitPlayer = false;
+    var _singlePlayer = null;
+    var _multiPlayer = null;
 
 
     // Private methods
@@ -151,16 +154,26 @@ var gameBoard = (function() {
                 Player2.setMove(false)
                 Player1.setMove(true)
             }
-            gameBoard.gameLogic(num, counter);
+            gameBoard.multiPlayerLogic(num, counter);
         } 
     }
 
     function isSinglePlayer() {
-        return _isSinglePlayer;
+        return _singlePlayer;
     }
 
     function isMultiPlayer() { 
         return _multiPlayer;
+    }
+
+    function setGameMode(mode) {
+        if (mode === 'single'){
+            _singlePlayer = true;
+            _multiPlayer = false;
+        } else if ( mode == 'multi') {
+            _multiPlayer = true;
+            _singlePlayer = false;
+        }
     }
 
     return {
@@ -172,6 +185,7 @@ var gameBoard = (function() {
         multiPlayerLogic,
         startUpCheck,
         setPlayerMove,
+        setGameMode,
         isSinglePlayer,
         isMultiPlayer
     };
@@ -198,7 +212,7 @@ var displayController = (function() {
 
     // Public methods
     function displayCounters(num, board, iconHtml) {
-        var childDivs = document.getElementById('board').getElementsByTagName('div');
+        var childDivs = document.getElementById('js-board').getElementsByTagName('div');
         
         for( let i=0; i < childDivs.length; i++ )
         {
@@ -235,8 +249,16 @@ var displayController = (function() {
         }
     }
 
+    function revealBoard() {
+        console.log('called')
+        var btns = document.querySelector('.js-gameplay-btns');
+        btns.style.display = 'none'
+        var board = document.querySelector('.js-board')
+        board.style.backgroundColor = 'white';
+    }
+
     return {
-        displayCounters, gameInfo, iconHtml, showRestartBtn, clearCounters
+        displayCounters, gameInfo, iconHtml, showRestartBtn, clearCounters, revealBoard
     };
 })();
 
@@ -283,20 +305,3 @@ const Player = (function(counter, move) {
 // Initialize players
 const Player1 = Player('X', true);
 const Player2 = Player('O', false);
-
-// Event Listeners
-document.body.addEventListener("click", (e) => {
-    if (e.target.classList.contains("js-place-counter")) {
-        let num = parseInt(e.path[0].classList[0].slice(-1));
-        let counter = '';
-        
-        gameBoard.startUpCheck();
-        gameBoard.setPlayerMove(num, counter);
-    }
-});
-
-document.body.addEventListener("click", (e) => {
-    if (e.target.classList.contains("js-restart")) {
-        gameBoard.restartGame();
-    }
-});

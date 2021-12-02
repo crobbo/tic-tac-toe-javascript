@@ -82,7 +82,8 @@ table {
     color: rgb(230, 11, 146);
 }
 
-.gameplay-btns {
+.js-gameplay-btns {
+    display: block;
     grid-area: header;
     grid-column-start: 5;
     margin: 15px 80px 0px 0px;
@@ -135,13 +136,16 @@ table {
     height: 75vh;
 }
 
-.board {
+
+
+.js-board {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     width: 600px;
     height:600px;
     margin-top: 50px;
+    background-color: rgb(52, 75, 109);
 }
 
 .js-grid-1 {
@@ -177,6 +181,10 @@ table {
 
 .js-grid-8 {
     border-right: 5px solid rgb(52, 75, 109);
+}
+
+.game-mode-text {
+    color: white;
 }
 
 .fa-circle {
