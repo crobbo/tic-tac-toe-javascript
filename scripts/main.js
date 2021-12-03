@@ -20,20 +20,14 @@
         }
     });
 
-    document.body.addEventListener("click", (e) => {
-        if (e.target.classList.contains("js-multi-btn")) {
-            gameBoard.setGameMode('multi');
-            displayController.revealBoard();
+    document.querySelector(".js-gameplay-btns").addEventListener("click", (e) => {
+        const tgt = e.target.closest("a");
+        if (tgt && tgt.classList.contains("js-btn")) { 
+          e.preventDefault()
+          gameBoard.setGameMode(tgt.dataset.gm);
+          displayController.revealBoard();
         }
-    });
-
-    document.body.addEventListener("click", (e) => {
-        if (e.target.classList.contains("js-single-btn")) {
-            console.log(e.target)
-            gameBoard.setGameMode('single');
-            displayController.revealBoard();
-        }
-    });
+      })
 
 // Gameboard module  - controls the game logic.
 var gameBoard = (function() {
@@ -250,10 +244,9 @@ var displayController = (function() {
     }
 
     function revealBoard() {
-        console.log('called')
         var btns = document.querySelector('.js-gameplay-btns');
         btns.style.display = 'none'
-        var board = document.querySelector('.js-board')
+        var board = document.getElementById('js-board')
         board.style.backgroundColor = 'white';
     }
 
