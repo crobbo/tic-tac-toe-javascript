@@ -1,3 +1,29 @@
+// Event Listeners
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("js-place-counter")) {
+            let num = parseInt(e.path[0].classList[0].slice(-1));
+            let counter = '';
+            
+            gameBoard.startUpCheck();
+            gameBoard.setPlayerMove(num, counter);
+        }
+    });
+
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("js-restart")) {
+            gameBoard.restartGame();
+        }
+    });
+
+    document.querySelector(".js-gameplay-btns").addEventListener("click", (e) => {
+        const tgt = e.target.closest("a");
+        if (tgt && tgt.classList.contains("js-btn")) { 
+          e.preventDefault()
+          gameBoard.setGameMode(tgt.dataset.gm);
+          displayController.revealBoard();
+        }
+      });
+
 // Gameboard module  - controls the game logic.
 var gameBoard = (function() {
     'use strict';
@@ -7,8 +33,31 @@ var gameBoard = (function() {
                  "", "", "",
                  "", "", ""];
     var _count = 0;
+    var _singlePlayer = null;
+    var _multiPlayer = null;
+    var _computerAvailableMoves = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     // Private methods
+
+    function _singlePlayerLogic(num) {
+        if (Player1.returnMove()) {
+            var counter = Player1.returnCounter();
+            Player1.setMove(false)
+            Player2.setMove(true)
+        } else {
+            var counter = Player2.returnCounter();
+            Player2.setMove(false)
+            Player1.setMove(true)
+        }
+        setTimeout(function(){ 
+            displayController.makePlayerMove(counter);
+            displayController.gameInfo();
+            if (checkForWinner()) return displayController.showRestartBtn();
+        }, 2000);
+
+        _count++
+    }
+
     function _checkStraights() {
         let h1 = _board.slice(0, 3);
         let h2 = _board.slice(3, 6);
@@ -49,18 +98,37 @@ var gameBoard = (function() {
     function _checkPlacement(num) {
         return gameBoard.returnBoard()[num-1] == "" ? true : false
     }
+    
+    function _getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    function returnComputerMove() {
+        var num = 0
+        do {
+            num = _getRandomInt(10);
+        } while (_computerAvailableMoves.includes(num) === false)
+        delete _computerAvailableMoves[num - 1];
+        return num ;
+    }
+      
 
     // Public methods
-    function gameLogic(num, counter) {
+    function multiPlayerLogic(num, counter) {
         if (_count === 9) { 
             _gameOver = true;
             return false
         }
+        delete _computerAvailableMoves[num -1];
         gameBoard.updateBoard(num, counter);
         displayController.displayCounters(num, gameBoard.returnBoard(), displayController.iconHtml());
         _count++
         displayController.gameInfo();
         if (checkForWinner()) return displayController.showRestartBtn()
+        if (isSinglePlayer()) {
+            _singlePlayerLogic(num);
+
+        }
     }
 
     function updateBoard(num, counter) {
@@ -114,8 +182,27 @@ var gameBoard = (function() {
                 Player2.setMove(false)
                 Player1.setMove(true)
             }
-            gameBoard.gameLogic(num, counter);
+
+            gameBoard.multiPlayerLogic(num, counter);
         } 
+    }
+
+    function isSinglePlayer() {
+        return _singlePlayer;
+    }
+
+    function isMultiPlayer() { 
+        return _multiPlayer;
+    }
+
+    function setGameMode(mode) {
+        if (mode === 'single'){
+            _singlePlayer = true;
+            _multiPlayer = false;
+        } else if ( mode == 'multi') {
+            _multiPlayer = true;
+            _singlePlayer = false;
+        }
     }
 
     return {
@@ -124,9 +211,13 @@ var gameBoard = (function() {
         checkForWinner,
         returnGameOver,
         returnCount,
-        gameLogic,
+        multiPlayerLogic,
         startUpCheck,
-        setPlayerMove
+        setPlayerMove,
+        setGameMode,
+        isSinglePlayer,
+        isMultiPlayer,
+        returnComputerMove
     };
 
 })();
@@ -151,7 +242,7 @@ var displayController = (function() {
 
     // Public methods
     function displayCounters(num, board, iconHtml) {
-        var childDivs = document.getElementById('board').getElementsByTagName('div');
+        var childDivs = document.getElementById('js-board').getElementsByTagName('div');
         
         for( let i=0; i < childDivs.length; i++ )
         {
@@ -160,6 +251,13 @@ var displayController = (function() {
                 childDiv.innerHTML = iconHtml;
             }
         }
+    }
+
+    function makePlayerMove(counter) {
+        gameInfo();
+        var num = gameBoard.returnComputerMove();
+        gameBoard.updateBoard(num, counter);
+        displayController.displayCounters(num, gameBoard.returnBoard(), displayController.iconHtml());
     }
 
     function gameInfo() {
@@ -188,8 +286,21 @@ var displayController = (function() {
         }
     }
 
+    function revealBoard() {
+        var btns = document.querySelector('.js-gameplay-btns');
+        btns.style.display = 'none'
+        var board = document.getElementById('js-board')
+        board.style.backgroundColor = 'white';
+    }
+
     return {
-        displayCounters, gameInfo, iconHtml, showRestartBtn, clearCounters
+        displayCounters,
+        gameInfo,
+        iconHtml,
+        showRestartBtn,
+        clearCounters,
+        revealBoard,
+        makePlayerMove
     };
 })();
 
@@ -236,20 +347,3 @@ const Player = (function(counter, move) {
 // Initialize players
 const Player1 = Player('X', true);
 const Player2 = Player('O', false);
-
-// Event Listeners
-document.body.addEventListener("click", (e) => {
-    if (e.target.classList.contains("js-place-counter")) {
-        let num = parseInt(e.path[0].classList[0].slice(-1));
-        let counter = '';
-        
-        gameBoard.startUpCheck();
-        gameBoard.setPlayerMove(num, counter);
-    }
-});
-
-document.body.addEventListener("click", (e) => {
-    if (e.target.classList.contains("js-restart")) {
-        gameBoard.restartGame();
-    }
-});
