@@ -57,8 +57,9 @@ table {
         "header header header header header"
         "left-side board board board right-side"
         "footer footer footer footer footer";
-    justify-items: center;
-
+    /* justify-items: center;
+    align-items: end; */
+    place-items: center;
 }
 
 .page-title {
@@ -131,9 +132,10 @@ table {
 
 .board-container {
     grid-area: board;
+    align-self: start;
     grid-column-start: 2;
     grid-column-end: 5;
-    height: 75vh;
+    height: 65vh;
 }
 
 #js-board {
@@ -213,7 +215,6 @@ table {
     width: 100px;
     height: 50px;
     border-radius: 5px;
-    margin-top: 50px;
     color: rgb(0, 0, 0);
     font-size: 1.2rem;
     text-decoration: none;

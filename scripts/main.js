@@ -4,13 +4,8 @@
             let num = parseInt(e.path[0].classList[0].slice(-1));
             let counter = '';
             
-            if (gameBoard.isMultiPlayer()) {
-                gameBoard.startUpCheck();
-                gameBoard.setPlayerMove(num, counter);
-            } else if (gameBoard.isSinglePlayer()) {
-                gameBoard.SinglePlayerLogic();
-
-            }
+            gameBoard.startUpCheck();
+            gameBoard.setPlayerMove(num, counter);
         }
     });
 
@@ -27,7 +22,7 @@
           gameBoard.setGameMode(tgt.dataset.gm);
           displayController.revealBoard();
         }
-      })
+      });
 
 // Gameboard module  - controls the game logic.
 var gameBoard = (function() {
@@ -40,9 +35,29 @@ var gameBoard = (function() {
     var _count = 0;
     var _singlePlayer = null;
     var _multiPlayer = null;
-
+    var _computerAvailableMoves = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     // Private methods
+
+    function _singlePlayerLogic(num) {
+        if (Player1.returnMove()) {
+            var counter = Player1.returnCounter();
+            Player1.setMove(false)
+            Player2.setMove(true)
+        } else {
+            var counter = Player2.returnCounter();
+            Player2.setMove(false)
+            Player1.setMove(true)
+        }
+        setTimeout(function(){ 
+            displayController.makePlayerMove(counter);
+            displayController.gameInfo();
+            if (checkForWinner()) return displayController.showRestartBtn();
+        }, 2000);
+
+        _count++
+    }
+
     function _checkStraights() {
         let h1 = _board.slice(0, 3);
         let h2 = _board.slice(3, 6);
@@ -83,6 +98,20 @@ var gameBoard = (function() {
     function _checkPlacement(num) {
         return gameBoard.returnBoard()[num-1] == "" ? true : false
     }
+    
+    function _getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    function returnComputerMove() {
+        var num = 0
+        do {
+            num = _getRandomInt(10);
+        } while (_computerAvailableMoves.includes(num) === false)
+        delete _computerAvailableMoves[num - 1];
+        return num ;
+    }
+      
 
     // Public methods
     function multiPlayerLogic(num, counter) {
@@ -90,11 +119,16 @@ var gameBoard = (function() {
             _gameOver = true;
             return false
         }
+        delete _computerAvailableMoves[num -1];
         gameBoard.updateBoard(num, counter);
         displayController.displayCounters(num, gameBoard.returnBoard(), displayController.iconHtml());
         _count++
         displayController.gameInfo();
         if (checkForWinner()) return displayController.showRestartBtn()
+        if (isSinglePlayer()) {
+            _singlePlayerLogic(num);
+
+        }
     }
 
     function updateBoard(num, counter) {
@@ -148,6 +182,7 @@ var gameBoard = (function() {
                 Player2.setMove(false)
                 Player1.setMove(true)
             }
+
             gameBoard.multiPlayerLogic(num, counter);
         } 
     }
@@ -181,7 +216,8 @@ var gameBoard = (function() {
         setPlayerMove,
         setGameMode,
         isSinglePlayer,
-        isMultiPlayer
+        isMultiPlayer,
+        returnComputerMove
     };
 
 })();
@@ -215,6 +251,13 @@ var displayController = (function() {
                 childDiv.innerHTML = iconHtml;
             }
         }
+    }
+
+    function makePlayerMove(counter) {
+        gameInfo();
+        var num = gameBoard.returnComputerMove();
+        gameBoard.updateBoard(num, counter);
+        displayController.displayCounters(num, gameBoard.returnBoard(), displayController.iconHtml());
     }
 
     function gameInfo() {
@@ -251,7 +294,13 @@ var displayController = (function() {
     }
 
     return {
-        displayCounters, gameInfo, iconHtml, showRestartBtn, clearCounters, revealBoard
+        displayCounters,
+        gameInfo,
+        iconHtml,
+        showRestartBtn,
+        clearCounters,
+        revealBoard,
+        makePlayerMove
     };
 })();
 
